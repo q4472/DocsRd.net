@@ -196,6 +196,7 @@
     <Content Include="wwwroot\lib\Nskd\Server.js" />
     <Content Include="wwwroot\lib\Nskd\Utility.js" />
     <None Include="Properties\PublishProfiles\local.pubxml" />
+    <None Include="Properties\PublishProfiles\p14.pubxml" />
     <None Include="Scripts\jquery-3.4.1.intellisense.js" />
     <Content Include="Scripts\jquery-3.4.1.js" />
     <Content Include="Scripts\jquery-3.4.1.min.js" />
