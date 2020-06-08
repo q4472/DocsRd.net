@@ -99,30 +99,41 @@
         let дата_окончания = mainDiv.find('input[name="дата_окончания"]');
         let комментарий = mainDiv.find('input[name="комментарий"]');
 
+        mainDiv.find('input[type="date"]').change(function () {
+            let e = $(this);
+            e.addClass('changed');
+            saveButton.prop('disabled', false);
+        });
         mainDiv.find('input[type="date"]').keyup(function () {
             let e = $(this);
-            let d = Nskd.parseDate(e.val());
-            if (e.val() != '' && d == null) {
-                e.removeClass('changed');
-                e.addClass('err');
-            }
-            else {
-                e.addClass('changed');
+            if (e.val() == '') {
                 e.removeClass('err');
+            } else {
+                let d = Nskd.parseDate(e.val());
+                if (d == null) {
+                    e.addClass('err');
+                }
+                else {
+                    e.removeClass('err');
+                }
             }
         });
         mainDiv.find('input[type="date"]').focusout(function () {
             let e = $(this);
-            let d = Nskd.parseDate(e.val());
-            if (e.val() != '' && d == null) {
-                e.addClass('err');
-            }
-            else {
+            if (e.val() == '') {
                 e.removeClass('err');
-                let dd = d.getDate(); dd = (dd < 10) ? '0' + dd : '' + dd;
-                let MM = d.getMonth() + 1; MM = (MM < 10) ? '0' + MM : '' + MM;
-                let yyyy = d.getFullYear();
-                e.val(dd + '.' + MM + '.' + yyyy);
+            } else {
+                let d = Nskd.parseDate(e.val());
+                if (d == null) {
+                    e.addClass('err');
+                }
+                else {
+                    e.removeClass('err');
+                    let dd = d.getDate(); dd = (dd < 10) ? '0' + dd : '' + dd;
+                    let MM = d.getMonth() + 1; MM = (MM < 10) ? '0' + MM : '' + MM;
+                    let yyyy = d.getFullYear();
+                    e.val(dd + '.' + MM + '.' + yyyy);
+                }
             }
         });
         mainDiv.find('input[type="text"], input[type="date"]').change(function () {

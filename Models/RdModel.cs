@@ -8,12 +8,12 @@ namespace DocsRd.Models
     {
         public static DataTable GetFsInfo(String path)
         {
-            DataTable dt = null;// Data.Fs.GetFsInfo(path);
+            DataTable dt = Data.Fs.GetFsInfo(path);
             return dt;
         }
         public static void SetFsInfo(Hashtable data)
         {
-            //Data.Fs.SetFsInfo(data);
+            Data.Fs.SetFsInfo(data);
         }
     }
 }

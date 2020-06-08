@@ -56,14 +56,14 @@ namespace DocsRd.Controllers
         public Object Set(String data)
         {
             Object result = $"Controllers.RdController.Test('{data}')<br />";
-            /*
+            
             Hashtable ht = Nskd.JsonV3.Parse(data) as Hashtable;
             if (ht != null)
             {
                 result += ht.Count.ToString();
             }
             Models.RdModel.SetFsInfo(ht);
-            */
+            
             return result;
         }
     }
