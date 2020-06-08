@@ -1,0 +1,100 @@
+﻿<style type="text/css">
+    #views_home_rd_index .filter {
+        border-left: 1px solid black;
+        border-top: 1px solid black;
+        width: 400px;
+        height: 500px;
+        float: left;
+        overflow: auto;
+    }
+
+    #views_home_rd_index .file_tree {
+        border-left: 1px solid black;
+        border-top: 1px solid black;
+        border-right: 1px solid black;
+        margin-left: 401px;
+        height: 500px;
+        overflow: auto;
+    }
+
+    #views_home_rd_index .cmd {
+        border-left: 1px solid black;
+        border-top: 1px solid black;
+        border-bottom: 1px solid black;
+        width: 300px;
+        height: 300px;
+        float: left;
+        overflow: auto;
+    }
+
+    #views_home_rd_index .inf {
+        border-left: 1px solid black;
+        border-top: 1px solid black;
+        border-right: 1px solid black;
+        border-bottom: 1px solid black;
+        margin-left: 301px;
+        height: 300px;
+        overflow: auto;
+    }
+
+    #views_home_rd_index .inf .path {
+        height: 30px;
+        overflow: hidden;
+    }
+
+    #views_home_rd_index .inf .inf {
+        height: 270px;
+        overflow: hidden;
+    }
+</style>
+
+<div id="views_home_rd_index">
+    <div class="filter">
+        <p>Фильтр</p>
+    </div>
+    <div class="file_tree">
+        @RenderPage("~/Views/Rd/FileSys.cshtml")
+    </div>
+    <div class="cmd">
+        <input type="button" value="Открыть" onclick="DocsRdViewsHomeRd.cmdOpen();" />
+    </div>
+    <div class="inf">
+        <div class="path"></div>
+        <div class="pars"></div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    var DocsRdViewsHomeRd = (function () {
+        let mainDiv = $('#views_home_rd_index');
+        let filterDiv = mainDiv.find('div.filter');
+        let fileTreeDiv = mainDiv.find('div.file_tree');
+        let cmdDiv = mainDiv.find('div.cmd');
+        let infDiv = mainDiv.find('div.inf');
+        return {
+            // вызов из FsTree
+            // type - Имя узла на котором был клик или 'dir' или 'file'
+            fileSystemRowClick: function (path, type) {
+                infDiv.find('div.path').text(path);
+                infDiv.find('div.pars').empty();
+                let data = 'cmd=GetFsInfo' +
+                    '&path=' + escape(path).replace(/\+/g, '%2B');
+                if (type == 'file') {
+                    $.post('/rd/getfsinfo', data, function (data) {
+                        //alert(data);
+                        infDiv.find('div.pars').html(data);
+                    });
+                }
+            },
+            cmdOpen: function () {
+                alert('DocsRdViewsHomeRd.cmdOpen()');
+
+                let path = infDiv.find('div.path').text();
+                alert(path); return;
+                if (path) {
+                    //FsTree.downloadFile(path);
+                }
+            }
+        };
+    })();
+</script>

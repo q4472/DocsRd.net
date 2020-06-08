@@ -1,0 +1,98 @@
+﻿<style type="text/css">
+
+    /* insect :-)
+    #p_left_section {
+        background-image: url("/Views/Shared/Imgs/insect.gif");
+        background-repeat: no-repeat;
+    }
+    */
+
+    #p_left_section_json_menu, #p_left_section_selected_menu_node_path {
+        display: none;
+    }
+
+    .nskdMenuNode {
+        display: none;
+    }
+
+    .nskdMenuNodeHead {
+    }
+
+    .nskdMenuNodeHeadMark {
+        width: 16px;
+        height: 16px;
+        float: left;
+        background-position: center;
+        background-repeat: no-repeat;
+        padding: 2px;
+    }
+
+    .nskdMenuNodeHeadMark_plus {
+        background-image: url("/Views/Shared/Menu/Nskd.Menu.plus.png");
+    }
+
+    .nskdMenuNodeHeadMark_leaf {
+        background-image: url("/Views/Shared/Menu/Nskd.menu.leaf.png");
+    }
+
+    .nskdMenuNodeHeadName {
+        margin-left: 16px;
+        padding: 2px;
+    }
+
+        .nskdMenuNodeHeadName:hover {
+            background-color: #ffffaa;
+            cursor: pointer;
+        }
+
+    .nskdMenuNodeCont {
+    }
+
+    .nskdMenuNodeHead {
+        padding: 3px;
+    }
+</style>
+<div id="p_left_section" style="height: 100%">
+    <p style="margin: 10px;">Фарм-сиб</p>
+    <hr style="line-height: 2px; margin: 4px 0px;" />
+    <div id="p_left_section_menu">
+        <input type="button" value="РУ" onclick="q();" />
+    </div>
+    <div id="p_left_section_selector"></div>
+</div>
+<script type="text/javascript">
+
+    if (window.addEventListener) window.addEventListener('load', init, false);
+    else window.attachEvent('onload', init);
+
+    function init() {
+
+        var _domMenu = document.getElementById('p_left_section_menu');
+
+        var _jsonMenu = document.getElementById('p_left_section_json_menu');
+        var _selectedMenuNodePath = document.getElementById('p_left_section_selected_menu_node_path');
+        if ((_jsonMenu) && (_selectedMenuNodePath)) {
+            var _jsoMenu = Nskd.Json.parse(_jsonMenu.firstChild.nodeValue);
+            var _jsoSelectedMenuNodePath = _selectedMenuNodePath.firstChild.nodeValue;
+            var menu = new Nskd.Menu(_domMenu, _jsoMenu, _jsoSelectedMenuNodePath, '#_layout_content');
+        }
+        /* insect :-)
+        var p_left_section = document.getElementById('p_left_section');
+        var w = p_left_section.clientWidth;
+        var h = p_left_section.clientHeight;
+        p_left_section.style.backgroundPosition = '' + ((w - 64) * Math.random()) + 'px ' + ((h - 64) * Math.random()) + 'px';
+        setTimeout(function () { p_left_section.style.backgroundImage = 'none'; }, 5000);
+        */
+    }
+
+    function q() {
+        $('#_layout_content').html('');
+        let jqXHR = $.post('/rd/index', 'sessionId=' + Nskd.Server.SessionId);
+        jqXHR.done(function (data) {
+            $('#_layout_content').html(data);
+        });
+        jqXHR.fail(function () {
+            $('#_layout_content').html('fail');
+        });
+    }
+</script>

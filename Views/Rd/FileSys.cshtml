@@ -1,0 +1,152 @@
+﻿<style type="text/css">
+    .FsNode {
+        margin-left: 18px;
+        font-family: Arial;
+        font-size: 9pt;
+    }
+
+
+    /* lines */
+    .FsNodeIsRoot {
+        /*margin-left: 0;*/
+    }
+
+    .IsMiddleFsNode {
+        background-image: url(/wwwroot/imgs/i.gif);
+        background-position: top left;
+        background-repeat: repeat-y;
+    }
+
+    .FsNodeIsLast {
+        background-image: url(/wwwroot/imgs/i_half.gif);
+        background-repeat: no-repeat;
+    }
+
+
+    /* expand */
+    .FsNodeExpand {
+        width: 18px;
+        height: 18px;
+        float: left;
+    }
+
+    .FsNodeExpandIsOpen .FsNodeExpand {
+        background-image: url(/wwwroot/imgs/expand_minus.gif);
+        cursor: pointer;
+    }
+
+    .FsNodeExpandIsClosed .FsNodeExpand {
+        background-image: url(/wwwroot/imgs/expand_plus.gif);
+        cursor: pointer;
+    }
+
+    .FsNodeExpandIsLeaf .FsNodeExpand {
+        background-image: url(/wwwroot/imgs/expand_leaf.gif);
+        cursor: auto;
+    }
+
+    /* content */
+    .FsNodeContent {
+        min-height: 18px;
+        margin-left: 18px;
+    }
+
+        .FsNodeContent:hover {
+            background-color: #ffffbb;
+        }
+
+    .FsNodeContentIsSelected {
+        background-color: #ffff99;
+    }
+
+    /* container */
+    .FsNodeContainer {
+        padding: 0;
+        margin: 0;
+    }
+
+    .FsNodeExpandIsOpen .FsNodeContainer {
+        display: block;
+    }
+
+    .FsNodeExpandIsClosed .FsNodeContainer {
+        display: none;
+    }
+
+    .FsNodeExpandIsLeaf .FsNodeContainer {
+        display: block;
+    }
+</style>
+
+<div style="height: 100%; overflow: auto;" onclick='FsTree.click(arguments[0])'>
+    @Html.Raw(TempData["html"])
+</div>
+
+<script type="text/javascript">
+    var FsTree = (function () {
+        function openDir(path, targetNode) {
+            var path = escape(path).replace(/\+/g, '%2B');
+            var data = 'cmd=GetDirectoryInfo&path=' + path;
+            $.post('/rd/fs', data, function (data) {
+                n = $.parseHTML(data);
+                $(targetNode).find('.FsNodeContainer').replaceWith($(n).find('.FsNodeContainer')[0]);
+            });
+        }
+        return {
+            click: function (event) {
+                event = event || window.event;
+                var clickedElem = event.target || event.srcElement;
+
+                // выбран узел (+-.) перед описанием (Content)
+                if ($(clickedElem).hasClass('FsNodeExpand')) {
+                    var node = clickedElem.parentNode;
+                    var name = $(node).attr("data-node-name");
+                    if (name == 'dir') {
+
+                        var isExpandOpen = $(node).hasClass('FsNodeExpandIsOpen');
+                        // определить новый класс для узла
+                        var newClass = isExpandOpen ? 'FsNodeExpandIsClosed' : 'FsNodeExpandIsOpen';
+                        // заменить текущий класс на newClass
+                        // регексп находит отдельно стоящий open|close и меняет на newClass
+                        var re = /(^|\s)(FsNodeExpandIsOpen|FsNodeExpandIsClosed)(\s|$)/;
+                        node.className = node.className.replace(re, '$1' + newClass + '$3');
+
+                        // зарузить только если cont пуст
+                        if ((!isExpandOpen) && ($(node).find('.FsNodeContainer').children().length == 0)) {
+                            var path = $(node).attr("data-path")
+                            openDir(path, node);
+                        }
+                    }
+                }
+
+                // выбрано описание
+                if ($(clickedElem).hasClass('FsNodeContent')) {
+                    $('.FsNodeContentIsSelected').removeClass('FsNodeContentIsSelected');
+                    $(clickedElem).addClass('FsNodeContentIsSelected');
+                    var node = clickedElem.parentNode;
+                    var name = $(node).attr("data-node-name");
+                    var path = $(node).attr("data-path");
+                    DocsRdViewsHomeRd.fileSystemRowClick(path, name);
+                }
+            },
+            downloadFile: function (path) {
+                var body = $(document.body);
+                var guid = Nskd.Js.guid();
+                var path = escape(path).replace(/\+/g, '%2B');
+
+                var iframe = $('<iframe name="' + guid + '" style="display: none;" />');
+                iframe.appendTo(body);
+                iframe[0].onload = function () { body[0].removeChild(iframe[0]); iframe[0] = null; };
+
+                var form = $('<form method="post" action="/rd/fs" target="' + guid + '" enctype="multipart/form-data" style="display: none;" onsubmit="return false;"></form>');
+                form.appendTo(body);
+                form.append('<input type="hidden" name="cmd" value="DownloadFile" />');
+                form.append('<input type="hidden" name="path" value="' + path + '" />');
+
+                form[0].submit();
+                body[0].removeChild(form[0]);
+                form[0] = null;
+            }
+        };
+    })();
+</script>

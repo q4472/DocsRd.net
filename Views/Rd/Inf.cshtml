@@ -1,0 +1,157 @@
+﻿@using System.Data
+@model DataTable
+@{
+    String id = "";
+    String номер = "";
+    String дата_регистрации = "";
+    String дата_перерегистрации = "";
+    String дата_окончания = "";
+    String комментарий = "";
+    if (Model.Rows.Count == 1)
+    {
+        id = (String)Model.Rows[0]["id"];
+        if (Model.Rows[0]["номер"] != DBNull.Value)
+        {
+            номер = (String)Model.Rows[0]["номер"];
+        }
+        if (Model.Rows[0]["дата_регистрации"] != DBNull.Value)
+        {
+            дата_регистрации = ((DateTime)Model.Rows[0]["дата_регистрации"]).ToString("dd.MM.yyyy");
+        }
+        if (Model.Rows[0]["дата_перерегистрации"] != DBNull.Value)
+        {
+            дата_перерегистрации = ((DateTime)Model.Rows[0]["дата_перерегистрации"]).ToString("dd.MM.yyyy");
+        }
+        if (Model.Rows[0]["дата_окончания"] != DBNull.Value)
+        {
+            дата_окончания = ((DateTime)Model.Rows[0]["дата_окончания"]).ToString("dd.MM.yyyy");
+        }
+        if (Model.Rows[0]["комментарий"] != DBNull.Value)
+        {
+            комментарий = (String)Model.Rows[0]["комментарий"];
+        }
+    }
+}
+<style type="text/css">
+    #views_rd_inf .hidden {
+        display: none;
+    }
+
+    #views_rd_inf .edit .header {
+        padding: 4px;
+        text-align: right;
+    }
+
+    #views_rd_inf .edit .data {
+        border: 1px solid black;
+        padding: 2px;
+    }
+
+        #views_rd_inf .edit .data input {
+            width: 200px;
+        }
+
+            #views_rd_inf .edit .data input.err {
+                background-color: #ffcccc;
+            }
+
+            #views_rd_inf .edit .data input.changed {
+                background-color: #ccffcc;
+            }
+</style>
+<div id="views_rd_inf">
+    <input type="button" value="Сохранить" disabled /><br />
+    <table>
+        <tr class="hidden">
+            <td>id</td>
+            <td><input type="text" name="id" value="@id" /></td>
+        </tr>
+        <tr class="edit">
+            <td class="header">Номер</td>
+            <td class="data"><input type="text" name="номер" value="@номер" /></td>
+        </tr>
+        <tr class="edit">
+            <td class="header">Дата регистрации</td>
+            <td class="data"><input type="date" name="дата_регистрации" value="@дата_регистрации" /></td>
+        </tr>
+        <tr class="edit">
+            <td class="header">Дата перерегистрации</td>
+            <td class="data"><input type="date" name="дата_перерегистрации" value="@дата_перерегистрации" /></td>
+        </tr>
+        <tr class="edit">
+            <td class="header">Дата окончания</td>
+            <td class="data"><input type="date" name="дата_окончания" value="@дата_окончания" /></td>
+        </tr>
+        <tr class="edit">
+            <td class="header">Комментарий</td>
+            <td class="data"><input type="text" name="комментарий" value="@комментарий" /></td>
+        </tr>
+    </table>
+</div>
+<script type="text/javascript">
+    var ViewsRdInf = (function () {
+        let mainDiv = $('div#views_rd_inf');
+        let saveButton = mainDiv.find('input[type="button"]');
+        let id = mainDiv.find('input[name="id"]');
+        let номер = mainDiv.find('input[name="номер"]');
+        let дата_регистрации = mainDiv.find('input[name="дата_регистрации"]');
+        let дата_перерегистрации = mainDiv.find('input[name="дата_перерегистрации"]');
+        let дата_окончания = mainDiv.find('input[name="дата_окончания"]');
+        let комментарий = mainDiv.find('input[name="комментарий"]');
+
+        mainDiv.find('input[type="date"]').keyup(function () {
+            let e = $(this);
+            let d = Nskd.parseDate(e.val());
+            if (e.val() != '' && d == null) {
+                e.removeClass('changed');
+                e.addClass('err');
+            }
+            else {
+                e.addClass('changed');
+                e.removeClass('err');
+            }
+        });
+        mainDiv.find('input[type="date"]').focusout(function () {
+            let e = $(this);
+            let d = Nskd.parseDate(e.val());
+            if (e.val() != '' && d == null) {
+                e.addClass('err');
+            }
+            else {
+                e.removeClass('err');
+                let dd = d.getDate(); dd = (dd < 10) ? '0' + dd : '' + dd;
+                let MM = d.getMonth() + 1; MM = (MM < 10) ? '0' + MM : '' + MM;
+                let yyyy = d.getFullYear();
+                e.val(dd + '.' + MM + '.' + yyyy);
+            }
+        });
+        mainDiv.find('input[type="text"], input[type="date"]').change(function () {
+            let e = $(this);
+            e.addClass('changed');
+            saveButton.prop('disabled', false);
+        });
+
+        saveButton.click(function () {
+            saveButton.prop('disabled', true);
+            let data = {
+                id: id.val(),
+                path: $('div#views_home_rd_index > div.inf > div.path').text(),
+                номер: номер.val(),
+                дата_регистрации: (дата_регистрации.hasClass('err')) ? '' : дата_регистрации.val(),
+                дата_перерегистрации: (дата_перерегистрации.hasClass('err')) ? '' : дата_перерегистрации.val(),
+                дата_окончания: (дата_окончания.hasClass('err')) ? '' : дата_окончания.val(),
+                комментарий: комментарий.val()
+            };
+            data = 'data=' + Nskd.Json.toString(data);
+            //alert(data);
+            $.post('/rd/set', data, function (data) {
+                alert(data);
+            });
+            номер.removeClass('changed').val('');
+            дата_регистрации.removeClass('changed').removeClass('err').val('');
+            дата_перерегистрации.removeClass('changed').removeClass('err').val('');
+            дата_окончания.removeClass('changed').removeClass('err').val('');
+            комментарий.removeClass('changed').val('');
+        });
+    })();
+</script>
