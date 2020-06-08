@@ -86,8 +86,8 @@
     var FsTree = (function () {
         function openDir(path, targetNode) {
             var path = escape(path).replace(/\+/g, '%2B');
-            var data = 'cmd=GetDirectoryInfo&path=' + path;
-            $.post('/rd/fs', data, function (data) {
+            var data = 'path=' + path;
+            $.post('/rd/getdirectoryinfo', data, function (data) {
                 n = $.parseHTML(data);
                 let newNode = $(n).find('.FsNodeContainer')[0];
                 $(targetNode).find('.FsNodeContainer').replaceWith(newNode);

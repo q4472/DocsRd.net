@@ -19,51 +19,43 @@ namespace DocsRd.Controllers
             catch (Exception e) { result += e.ToString(); }
             return result;
         }
-        public Object Fs(String cmd, String path)
+        public Object DownloadFile(String path) 
         {
             path = Utility.UnEscape(path);
-            Object result = $"DocsRd.Controllers.RdController.GetDirInf('{cmd}', '{path}')<br />";
-            String html;
-            switch (cmd)
+            Object result = $"DocsRd.Controllers.RdController.DownloadFile('{path}')<br />";
+            try
             {
-                case "GetFileInfo":
-                    html = "GetFileInfo: '" + path + "'";
-                    //html = FileTree.GetFileInfo(path);
-                    result = html;
-                    break;
-                case "GetDirectoryInfo":
-                    Guid sessionId = new Guid();
-                    html = FileTree.RenderDirectoryTree(sessionId, path);
-                    result = html;
-                    break;
-                case "DownloadFile":
-                    FileData fd = FileData.GetFile(path);
-                    result = File(fd.Contents, fd.ContentType, fd.Name);
-                    break;
-                default:
-                    break;
+                FileData fd = FileData.GetFile(path);
+                result = File(fd.Contents, fd.ContentType, fd.Name);
             }
+            catch (Exception e) { result += e.ToString(); }
             return result;
         }
-        public Object GetFsInfo(String cmd, String path)
+        public Object GetDirectoryInfo(String path)
         {
             path = Utility.UnEscape(path);
-            Object result = $"Controllers.RdController.GetFsInfo('{cmd}', '{path}')<br />";
-            var dt = RdModel.GetFsInfo(path);
+            Object result = $"DocsRd.Controllers.RdController.GetDirectoryInfo('{path}')<br />";
+            Guid sessionId = new Guid();
+            result = FileTree.RenderDirectoryTree(sessionId, path);
+            return result;
+        }
+        public Object GetFsInfo(String path)
+        {
+            path = Utility.UnEscape(path);
+            Object result = $"Controllers.RdController.GetFsInfo('{path}')<br />";
+            var dt = Data.Fs.GetFsInfo(path);
             result = PartialView("~/Views/Rd/Inf.cshtml", dt);
             return result;
         }
         public Object Set(String data)
         {
             Object result = $"Controllers.RdController.Test('{data}')<br />";
-            
             Hashtable ht = Nskd.JsonV3.Parse(data) as Hashtable;
             if (ht != null)
             {
                 result += ht.Count.ToString();
             }
-            Models.RdModel.SetFsInfo(ht);
-            
+            Data.Fs.SetFsInfo(ht);
             return result;
         }
     }

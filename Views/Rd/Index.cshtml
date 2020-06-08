@@ -77,8 +77,7 @@
             fileSystemRowClick: function (path, type) {
                 infDiv.find('div.path').text(path);
                 infDiv.find('div.pars').empty();
-                let data = 'cmd=GetFsInfo' +
-                    '&path=' + escape(path).replace(/\+/g, '%2B');
+                let data = 'path=' + escape(path).replace(/\+/g, '%2B');
                 if (type == 'file') {
                     $.post('/rd/getfsinfo', data, function (data) {
                         //alert(data);
@@ -98,9 +97,8 @@
                     iframe.appendTo(body);
                     iframe[0].onload = function () { body[0].removeChild(iframe[0]); iframe[0] = null; };
 
-                    var form = $('<form method="post" action="/rd/fs" target="' + guid + '" enctype="multipart/form-data" style="display: none;" onsubmit="return false;"></form>');
+                    var form = $('<form method="post" action="/rd/downloadfile" target="' + guid + '" enctype="multipart/form-data" style="display: none;" onsubmit="return false;"></form>');
                     form.appendTo(body);
-                    form.append('<input type="hidden" name="cmd" value="DownloadFile" />');
                     form.append('<input type="hidden" name="path" value="' + path + '" />');
 
                     form[0].submit();
