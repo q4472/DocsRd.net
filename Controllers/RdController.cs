@@ -37,8 +37,8 @@ namespace DocsRd.Controllers
                     result = html;
                     break;
                 case "DownloadFile":
-                    //FileData fd = FileData.GetFile(path);
-                    //result = File(fd.Contents, fd.ContentType, fd.Name);
+                    FileData fd = FileData.GetFile(path);
+                    result = File(fd.Contents, fd.ContentType, fd.Name);
                     break;
                 default:
                     break;

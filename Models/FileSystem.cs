@@ -16,10 +16,10 @@ namespace DocsRd.Models
         public Byte[] Contents { get; set; }
         public static FileData GetFile(String path)
         {
-            //Guid sessionId = new Guid();
+            Guid sessionId = new Guid();
             FileData fd = new FileData();
             fd.FullName = path;
-            fd.Contents = null; // HomeData.Fs.GetFileContents(sessionId, path);
+            fd.Contents = Fs.GetFileContents(sessionId, path);
             fd.ContentType = "text/plain";
             String[] parts = path.Split('.');
             String ext = parts[parts.Length - 1].ToLower();
