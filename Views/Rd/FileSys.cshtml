@@ -90,44 +90,39 @@
             $.post('/rd/getdirectoryinfo', data, function (data) {
                 n = $.parseHTML(data);
                 let newNode = $(n).find('.FsNodeContainer')[0];
-                $(targetNode).find('.FsNodeContainer').replaceWith(newNode);
+                targetNode.find('.FsNodeContainer').replaceWith(newNode);
             });
         }
         return {
             click: function (event) {
                 event = event || window.event;
-                var clickedElem = event.target || event.srcElement;
+                let clickedElem = $(event.target || event.srcElement);
+                let node = clickedElem.parent();
+                let type = node.attr("data-node-name");
+                let path = node.attr("data-path");
 
                 // выбран узел (+-.) перед описанием (Content)
-                if ($(clickedElem).hasClass('FsNodeExpand')) {
-                    var node = clickedElem.parentNode;
-                    var name = $(node).attr("data-node-name");
-                    if (name == 'dir') {
-
-                        var isExpandOpen = $(node).hasClass('FsNodeExpandIsOpen');
-                        // определить новый класс для узла
-                        var newClass = isExpandOpen ? 'FsNodeExpandIsClosed' : 'FsNodeExpandIsOpen';
-                        // заменить текущий класс на newClass
-                        // регексп находит отдельно стоящий open|close и меняет на newClass
-                        var re = /(^|\s)(FsNodeExpandIsOpen|FsNodeExpandIsClosed)(\s|$)/;
-                        node.className = node.className.replace(re, '$1' + newClass + '$3');
-
+                if (clickedElem.hasClass('FsNodeExpand')) {
+                    if (type == 'dir') {
+                        // переключить класс для узла
+                        let isExpandOpen = node.hasClass('FsNodeExpandIsOpen');
+                        if (isExpandOpen) {
+                            node.removeClass('FsNodeExpandIsOpen').addClass('FsNodeExpandIsClosed');
+                        } else {
+                            node.removeClass('FsNodeExpandIsClosed').addClass('FsNodeExpandIsOpen');
+                        }
                         // зарузить только если cont пуст
-                        if ((!isExpandOpen) && ($(node).find('.FsNodeContainer').children().length == 0)) {
-                            var path = $(node).attr("data-path")
+                        if ((!isExpandOpen) && (node.find('.FsNodeContainer').children().length == 0)) {
                             openDir(path, node);
                         }
                     }
                 }
 
                 // выбрано описание
-                if ($(clickedElem).hasClass('FsNodeContent')) {
+                if (clickedElem.hasClass('FsNodeContent')) {
                     $('.FsNodeContentIsSelected').removeClass('FsNodeContentIsSelected');
-                    $(clickedElem).addClass('FsNodeContentIsSelected');
-                    var node = clickedElem.parentNode;
-                    var name = $(node).attr("data-node-name");
-                    var path = $(node).attr("data-path");
-                    DocsRdViewsHomeRd.fileSystemRowClick(path, name);
+                    clickedElem.addClass('FsNodeContentIsSelected');
+                    DocsRdViewsHomeRd.fileSystemRowClick(path, type);
                 }
             }
         };

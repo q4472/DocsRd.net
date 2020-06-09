@@ -85,7 +85,7 @@ namespace DocsRd.Data
             }
             return r;
         }
-        public static DataTable GetFsInfo(String path)
+        public static DataTable GetFileInfo(String path)
         {
             RequestPackage rqp = new RequestPackage()
             {
@@ -97,7 +97,7 @@ namespace DocsRd.Data
             DataTable dt = GetFirstTable(Execute(rqp));
             return dt;
         }
-        public static void SetFsInfo(Hashtable data)
+        public static void SetFileInfo(Hashtable data)
         {
             Object path = data.ContainsKey("path") ? data["path"] : null;
             Object номер = data.ContainsKey("номер") ? data["номер"] : null;

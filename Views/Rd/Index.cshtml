@@ -79,7 +79,7 @@
                 infDiv.find('div.pars').empty();
                 let data = 'path=' + escape(path).replace(/\+/g, '%2B');
                 if (type == 'file') {
-                    $.post('/rd/getfsinfo', data, function (data) {
+                    $.post('/rd/getfileinfo', data, function (data) {
                         //alert(data);
                         infDiv.find('div.pars').html(data);
                     });

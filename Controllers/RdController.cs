@@ -39,15 +39,15 @@ namespace DocsRd.Controllers
             result = FileTree.RenderDirectoryTree(sessionId, path);
             return result;
         }
-        public Object GetFsInfo(String path)
+        public Object GetFileInfo(String path)
         {
             path = Utility.UnEscape(path);
-            Object result = $"Controllers.RdController.GetFsInfo('{path}')<br />";
-            var dt = Data.Fs.GetFsInfo(path);
+            Object result = $"Controllers.RdController.GetFileInfo('{path}')<br />";
+            var dt = Data.Fs.GetFileInfo(path);
             result = PartialView("~/Views/Rd/Inf.cshtml", dt);
             return result;
         }
-        public Object Set(String data)
+        public Object SetFileInfo(String data)
         {
             Object result = $"Controllers.RdController.Test('{data}')<br />";
             Hashtable ht = Nskd.JsonV3.Parse(data) as Hashtable;
@@ -55,7 +55,7 @@ namespace DocsRd.Controllers
             {
                 result += ht.Count.ToString();
             }
-            Data.Fs.SetFsInfo(ht);
+            Data.Fs.SetFileInfo(ht);
             return result;
         }
     }

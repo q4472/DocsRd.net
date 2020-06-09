@@ -144,9 +144,10 @@
 
         saveButton.click(function () {
             saveButton.prop('disabled', true);
+            let path = $('div#views_home_rd_index > div.inf > div.path').text();
             let data = {
                 id: id.val(),
-                path: $('div#views_home_rd_index > div.inf > div.path').text(),
+                path: path,
                 номер: номер.val(),
                 дата_регистрации: (дата_регистрации.hasClass('err')) ? '' : дата_регистрации.val(),
                 дата_перерегистрации: (дата_перерегистрации.hasClass('err')) ? '' : дата_перерегистрации.val(),
@@ -155,8 +156,9 @@
             };
             data = 'data=' + Nskd.Json.toString(data);
             //alert(data);
-            $.post('/rd/set', data, function (data) {
-                alert(data);
+            $.post('/rd/setfileinfo', data, function (data) {
+                //alert(data);
+                DocsRdViewsHomeRd.fileSystemRowClick(path, 'file');
             });
             номер.removeClass('changed').val('');
             дата_регистрации.removeClass('changed').removeClass('err').val('');
