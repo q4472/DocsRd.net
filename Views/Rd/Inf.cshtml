@@ -72,15 +72,15 @@
         </tr>
         <tr class="edit">
             <td class="header">Дата регистрации</td>
-            <td class="data"><input type="date" name="дата_регистрации" value="@дата_регистрации" /></td>
+            <td class="data"><input type="text" class="date" name="дата_регистрации" value="@дата_регистрации" /></td>
         </tr>
         <tr class="edit">
             <td class="header">Дата перерегистрации</td>
-            <td class="data"><input type="date" name="дата_перерегистрации" value="@дата_перерегистрации" /></td>
+            <td class="data"><input type="text" class="date" name="дата_перерегистрации" value="@дата_перерегистрации" /></td>
         </tr>
         <tr class="edit">
             <td class="header">Дата окончания</td>
-            <td class="data"><input type="date" name="дата_окончания" value="@дата_окончания" /></td>
+            <td class="data"><input type="text" class="date" name="дата_окончания" value="@дата_окончания" /></td>
         </tr>
         <tr class="edit">
             <td class="header">Комментарий</td>
@@ -99,12 +99,7 @@
         let дата_окончания = mainDiv.find('input[name="дата_окончания"]');
         let комментарий = mainDiv.find('input[name="комментарий"]');
 
-        mainDiv.find('input[type="date"]').change(function () {
-            let e = $(this);
-            e.addClass('changed');
-            saveButton.prop('disabled', false);
-        });
-        mainDiv.find('input[type="date"]').keyup(function () {
+        mainDiv.find('input[type="text"]'.date).keyup(function () {
             let e = $(this);
             if (e.val() == '') {
                 e.removeClass('err');
@@ -118,7 +113,7 @@
                 }
             }
         });
-        mainDiv.find('input[type="date"]').focusout(function () {
+        mainDiv.find('input[type="text"].date').focusout(function () {
             let e = $(this);
             if (e.val() == '') {
                 e.removeClass('err');
@@ -136,7 +131,7 @@
                 }
             }
         });
-        mainDiv.find('input[type="text"], input[type="date"]').change(function () {
+        mainDiv.find('input[type="text"]').change(function () {
             let e = $(this);
             e.addClass('changed');
             saveButton.prop('disabled', false);
