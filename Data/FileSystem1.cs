@@ -2,6 +2,7 @@
 using System;
 using System.Collections;
 using System.Data;
+using DocsRd.Models;
 
 namespace DocsRd.Data
 {
@@ -97,24 +98,18 @@ namespace DocsRd.Data
             DataTable dt = GetFirstTable(Execute(rqp));
             return dt;
         }
-        public static void SetFileInfo(Hashtable data)
+        public static void SetFileInfo(RdInf rdinf)
         {
-            Object path = data.ContainsKey("path") ? data["path"] : null;
-            Object номер = data.ContainsKey("номер") ? data["номер"] : null;
-            Object дата_регистрации = data.ContainsKey("дата_регистрации") ? ((data["дата_регистрации"] as String != "") ? data["дата_регистрации"] : null) : null;
-            Object дата_перерегистрации = data.ContainsKey("дата_перерегистрации") ? ((data["дата_перерегистрации"] as String != "") ? data["дата_перерегистрации"] : null) : null;
-            Object дата_окончания = data.ContainsKey("дата_окончания") ? ((data["дата_окончания"] as String != "") ? data["дата_окончания"] : null) : null;
-            Object комментарий = data.ContainsKey("комментарий") ? data["комментарий"] : null;
             RequestPackage rqp = new RequestPackage()
             {
                 Command = "[dbo].[рег_уд__файлы__set]",
                 Parameters = new RequestParameter[] {
-                    new RequestParameter("path", path),
-                    new RequestParameter("номер", номер),
-                    new RequestParameter("дата_регистрации", дата_регистрации),
-                    new RequestParameter("дата_перерегистрации", дата_перерегистрации),
-                    new RequestParameter("дата_окончания", дата_окончания),
-                    new RequestParameter("комментарий", комментарий)
+                    new RequestParameter("path", rdinf.Path),
+                    new RequestParameter("номер", rdinf.Номер),
+                    new RequestParameter("дата_регистрации", rdinf.ДатаРегистрации),
+                    new RequestParameter("дата_перерегистрации", rdinf.ДатаПеререгистрации),
+                    new RequestParameter("дата_окончания", rdinf.ДатаОкончания),
+                    new RequestParameter("комментарий", rdinf.Комментарий)
                 }
             };
             Execute(rqp);

@@ -55,7 +55,8 @@ namespace DocsRd.Controllers
             {
                 result += ht.Count.ToString();
             }
-            Data.Fs.SetFileInfo(ht);
+            RdInf rdInf = new RdInf(ht);
+            Data.Fs.SetFileInfo(rdInf);
             return result;
         }
     }

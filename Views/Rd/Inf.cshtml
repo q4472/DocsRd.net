@@ -99,7 +99,7 @@
         let дата_окончания = mainDiv.find('input[name="дата_окончания"]');
         let комментарий = mainDiv.find('input[name="комментарий"]');
 
-        mainDiv.find('input[type="text"]'.date).keyup(function () {
+        mainDiv.find('input[type="text"].date').keyup(function () {
             let e = $(this);
             if (e.val() == '') {
                 e.removeClass('err');
@@ -120,14 +120,13 @@
             } else {
                 let d = Nskd.parseDate(e.val());
                 if (d == null) {
-                    e.addClass('err');
+                    e.val('').addClass('err');
                 }
                 else {
-                    e.removeClass('err');
                     let dd = d.getDate(); dd = (dd < 10) ? '0' + dd : '' + dd;
                     let MM = d.getMonth() + 1; MM = (MM < 10) ? '0' + MM : '' + MM;
                     let yyyy = d.getFullYear();
-                    e.val(dd + '.' + MM + '.' + yyyy);
+                    e.val(dd + '.' + MM + '.' + yyyy).removeClass('err');
                 }
             }
         });

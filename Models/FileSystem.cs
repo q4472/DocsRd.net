@@ -233,4 +233,33 @@ namespace DocsRd.Models
         }
         */
     }
+    public class RdInf
+    {
+        public String Path;
+        public String Номер;
+        public String ДатаРегистрации;
+        public String ДатаПеререгистрации;
+        public String ДатаОкончания;
+        public String Комментарий;
+        public RdInf(Hashtable data)
+        {
+            Path = data.ContainsKey("path") ? data["path"] as String : null;
+            if (String.IsNullOrWhiteSpace(Path)) { Path = null; }
+
+            Номер = data.ContainsKey("номер") ? data["номер"] as String : null;
+            if (String.IsNullOrWhiteSpace(Номер)) { Номер = null; }
+
+            ДатаРегистрации = data.ContainsKey("дата_регистрации") ? data["дата_регистрации"] as String : null;
+            if (String.IsNullOrWhiteSpace(ДатаРегистрации)) { ДатаРегистрации = null; }
+
+            ДатаПеререгистрации = data.ContainsKey("дата_перерегистрации") ? data["дата_перерегистрации"] as String : null;
+            if (String.IsNullOrWhiteSpace(ДатаПеререгистрации)) { ДатаПеререгистрации = null; }
+
+            ДатаОкончания = data.ContainsKey("дата_окончания") ? data["дата_окончания"] as String : null;
+            if (String.IsNullOrWhiteSpace(ДатаОкончания)) { ДатаОкончания = null; }
+
+            Комментарий = data.ContainsKey("комментарий") ? data["комментарий"] as String : null;
+            if (String.IsNullOrWhiteSpace(Комментарий)) { Комментарий = null; }
+        }
+    }
 }
