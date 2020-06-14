@@ -254,54 +254,11 @@ namespace DocsRd.Models
             if (String.IsNullOrWhiteSpace(номер)) { номер = null; }
             else { номер = номер.Trim(); }
 
-            String s;
-            s = data.ContainsKey("дата_регистрации") ? data["дата_регистрации"] as String : null;
-            if (String.IsNullOrWhiteSpace(s)) { датаРегистрации = null; }
-            else
-            {
-                s = s.Trim();
-                if (s.Length == 10
-                    && new Regex(@"dd\.dd\.dddd").IsMatch(s)
-                    && Int32.TryParse(s.Substring(0, 2), out Int32 dd)
-                    && Int32.TryParse(s.Substring(3, 2), out Int32 MM)
-                    && Int32.TryParse(s.Substring(6, 4), out Int32 yyyy)
-                    )
-                {
-                    датаРегистрации = new DateTime(yyyy, MM, dd);
-                }
-            }
+            датаРегистрации = ParseRuDate(data.ContainsKey("дата_регистрации") ? data["дата_регистрации"] : null);
+            
+            датаПеререгистрации = ParseRuDate(data.ContainsKey("дата_перерегистрации") ? data["дата_перерегистрации"] : null);
 
-            s = data.ContainsKey("дата_перерегистрации") ? data["дата_перерегистрации"] as String : null;
-            if (String.IsNullOrWhiteSpace(s)) { датаПеререгистрации = null; }
-            else
-            {
-                s = s.Trim();
-                if (s.Length == 10
-                    && new Regex(@"dd\.dd\.dddd").IsMatch(s)
-                    && Int32.TryParse(s.Substring(0, 2), out Int32 dd)
-                    && Int32.TryParse(s.Substring(3, 2), out Int32 MM)
-                    && Int32.TryParse(s.Substring(6, 4), out Int32 yyyy)
-                    )
-                {
-                    датаПеререгистрации = new DateTime(yyyy, MM, dd);
-                }
-            }
-
-            s = data.ContainsKey("дата_окончания") ? data["дата_окончания"] as String : null;
-            if (String.IsNullOrWhiteSpace(s)) { датаОкончания = null; }
-            else
-            {
-                s = s.Trim();
-                if (s.Length == 10
-                    && new Regex(@"dd\.dd\.dddd").IsMatch(s)
-                    && Int32.TryParse(s.Substring(0, 2), out Int32 dd)
-                    && Int32.TryParse(s.Substring(3, 2), out Int32 MM)
-                    && Int32.TryParse(s.Substring(6, 4), out Int32 yyyy)
-                    )
-                {
-                    датаОкончания = new DateTime(yyyy, MM, dd);
-                }
-            }
+            датаОкончания = ParseRuDate(data.ContainsKey("дата_окончания") ? data["дата_окончания"] : null);
 
             комментарий = data.ContainsKey("комментарий") ? data["комментарий"] as String : null;
             if (String.IsNullOrWhiteSpace(комментарий)) { комментарий = null; }
@@ -316,40 +273,68 @@ namespace DocsRd.Models
         public void GetFileInfo(String path) 
         {
             DataTable dt = Data.Fs.GetFileInfo(path);
-            String id = "";
-            String номер = "";
-            String дата_регистрации = "";
-            String дата_перерегистрации = "";
-            String дата_окончания = "";
-            String комментарий = "";
-            if (dt.Rows.Count == 1)
+            if (dt != null && dt.Rows.Count == 1)
             {
-                id = (String)dt.Rows[0]["id"];
-                if (dt.Rows[0]["номер"] != DBNull.Value)
+                if (dt.Columns.Contains("path") && dt.Rows[0]["path"] != DBNull.Value)
+                {
+                    path = (String)dt.Rows[0]["path"];
+                }
+                else { path = null; }
+
+                if (dt.Columns.Contains("номер") && dt.Rows[0]["номер"] != DBNull.Value)
                 {
                     номер = (String)dt.Rows[0]["номер"];
                 }
-                if (dt.Rows[0]["дата_регистрации"] != DBNull.Value)
+                else { номер = null; }
+
+                if (dt.Columns.Contains("дата_регистрации") && dt.Rows[0]["дата_регистрации"] != DBNull.Value)
                 {
-                    дата_регистрации = ((DateTime)dt.Rows[0]["дата_регистрации"]).ToString("dd.MM.yyyy");
+                    датаРегистрации = (DateTime)dt.Rows[0]["дата_регистрации"];
                 }
-                if (dt.Rows[0]["дата_перерегистрации"] != DBNull.Value)
+                else { датаРегистрации = null; }
+
+                if (dt.Columns.Contains("дата_перерегистрации") && dt.Rows[0]["дата_перерегистрации"] != DBNull.Value)
                 {
-                    дата_перерегистрации = ((DateTime)dt.Rows[0]["дата_перерегистрации"]).ToString("dd.MM.yyyy");
+                    датаПеререгистрации = (DateTime)dt.Rows[0]["дата_перерегистрации"];
                 }
-                if (dt.Rows[0]["дата_окончания"] != DBNull.Value)
+                else { датаПеререгистрации = null; }
+
+                if (dt.Columns.Contains("дата_окончания") && dt.Rows[0]["дата_окончания"] != DBNull.Value)
                 {
-                    дата_окончания = ((DateTime)dt.Rows[0]["дата_окончания"]).ToString("dd.MM.yyyy");
+                    датаОкончания = (DateTime)dt.Rows[0]["дата_окончания"];
                 }
-                if (dt.Rows[0]["комментарий"] != DBNull.Value)
+                else { датаОкончания = null; }
+
+                if (dt.Columns.Contains("комментарий") && dt.Rows[0]["комментарий"] != DBNull.Value)
                 {
                     комментарий = (String)dt.Rows[0]["комментарий"];
                 }
+                else { комментарий = null; }
             }
         }
         public void SetFileInfo() 
         {
             Data.Fs.SetFileInfo(this);
+        }
+        private DateTime? ParseRuDate(Object value)
+        {
+            DateTime? date = null;
+            String s = value as String;
+            if (String.IsNullOrWhiteSpace(s)) { date = null; }
+            else
+            {
+                s = s.Trim();
+                if (s.Length == 10
+                    && new Regex(@"\d\d\.\d\d\.\d\d\d\d").IsMatch(s)
+                    && Int32.TryParse(s.Substring(0, 2), out Int32 dd)
+                    && Int32.TryParse(s.Substring(3, 2), out Int32 MM)
+                    && Int32.TryParse(s.Substring(6, 4), out Int32 yyyy)
+                    )
+                {
+                    date = new DateTime(yyyy, MM, dd);
+                }
+            }
+            return date;
         }
     }
 }

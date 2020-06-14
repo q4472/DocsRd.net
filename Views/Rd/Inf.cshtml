@@ -1,37 +1,5 @@
 ﻿@using System.Data
-@model DataTable
-@{
-    String id = "";
-    String номер = "";
-    String дата_регистрации = "";
-    String дата_перерегистрации = "";
-    String дата_окончания = "";
-    String комментарий = "";
-    if (Model.Rows.Count == 1)
-    {
-        id = (String)Model.Rows[0]["id"];
-        if (Model.Rows[0]["номер"] != DBNull.Value)
-        {
-            номер = (String)Model.Rows[0]["номер"];
-        }
-        if (Model.Rows[0]["дата_регистрации"] != DBNull.Value)
-        {
-            дата_регистрации = ((DateTime)Model.Rows[0]["дата_регистрации"]).ToString("dd.MM.yyyy");
-        }
-        if (Model.Rows[0]["дата_перерегистрации"] != DBNull.Value)
-        {
-            дата_перерегистрации = ((DateTime)Model.Rows[0]["дата_перерегистрации"]).ToString("dd.MM.yyyy");
-        }
-        if (Model.Rows[0]["дата_окончания"] != DBNull.Value)
-        {
-            дата_окончания = ((DateTime)Model.Rows[0]["дата_окончания"]).ToString("dd.MM.yyyy");
-        }
-        if (Model.Rows[0]["комментарий"] != DBNull.Value)
-        {
-            комментарий = (String)Model.Rows[0]["комментарий"];
-        }
-    }
-}
+@model DocsRd.Models.RdInf
 <style type="text/css">
     #views_rd_inf .hidden {
         display: none;
@@ -62,29 +30,25 @@
 <div id="views_rd_inf">
     <input type="button" value="Сохранить" disabled /><br />
     <table>
-        <tr class="hidden">
-            <td>id</td>
-            <td><input type="text" name="id" value="@id" /></td>
-        </tr>
         <tr class="edit">
             <td class="header">Номер</td>
-            <td class="data"><input type="text" name="номер" value="@номер" /></td>
+            <td class="data"><input type="text" name="номер" value="@Model.Номер" /></td>
         </tr>
         <tr class="edit">
             <td class="header">Дата регистрации</td>
-            <td class="data"><input type="text" class="date" name="дата_регистрации" value="@дата_регистрации" /></td>
+            <td class="data"><input type="text" class="date" name="дата_регистрации" value="@(Model.ДатаРегистрации == null ? "" : Model.ДатаРегистрации.Value.ToString("dd.MM.yyyy"))" /></td>
         </tr>
         <tr class="edit">
             <td class="header">Дата перерегистрации</td>
-            <td class="data"><input type="text" class="date" name="дата_перерегистрации" value="@дата_перерегистрации" /></td>
+            <td class="data"><input type="text" class="date" name="дата_перерегистрации" value="@(Model.ДатаПеререгистрации == null ? "" : Model.ДатаПеререгистрации.Value.ToString("dd.MM.yyyy"))" /></td>
         </tr>
         <tr class="edit">
             <td class="header">Дата окончания</td>
-            <td class="data"><input type="text" class="date" name="дата_окончания" value="@дата_окончания" /></td>
+            <td class="data"><input type="text" class="date" name="дата_окончания" value="@(Model.ДатаОкончания == null ? "" : Model.ДатаОкончания.Value.ToString("dd.MM.yyyy"))" /></td>
         </tr>
         <tr class="edit">
             <td class="header">Комментарий</td>
-            <td class="data"><input type="text" name="комментарий" value="@комментарий" /></td>
+            <td class="data"><input type="text" name="комментарий" value="@Model.Комментарий" /></td>
         </tr>
     </table>
 </div>
@@ -92,7 +56,6 @@
     var ViewsRdInf = (function () {
         let mainDiv = $('div#views_rd_inf');
         let saveButton = mainDiv.find('input[type="button"]');
-        let id = mainDiv.find('input[name="id"]');
         let номер = mainDiv.find('input[name="номер"]');
         let дата_регистрации = mainDiv.find('input[name="дата_регистрации"]');
         let дата_перерегистрации = mainDiv.find('input[name="дата_перерегистрации"]');
@@ -140,7 +103,6 @@
             saveButton.prop('disabled', true);
             let path = $('div#views_home_rd_index > div.inf > div.path').text();
             let data = {
-                id: id.val(),
                 path: path,
                 номер: номер.val(),
                 дата_регистрации: (дата_регистрации.hasClass('err')) ? '' : дата_регистрации.val(),
