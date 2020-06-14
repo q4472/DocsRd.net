@@ -1,10 +1,12 @@
 ﻿using DocsRd.Data;
+using Microsoft.SqlServer.Server;
 using System;
 using System.Collections;
 using System.Data;
 using System.IO;
 using System.Net;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace DocsRd.Models
 {
@@ -235,31 +237,119 @@ namespace DocsRd.Models
     }
     public class RdInf
     {
-        public String Path;
-        public String Номер;
-        public String ДатаРегистрации;
-        public String ДатаПеререгистрации;
-        public String ДатаОкончания;
-        public String Комментарий;
+        private String path;
+        private String номер;
+        private DateTime? датаРегистрации;
+        private DateTime? датаПеререгистрации;
+        private DateTime? датаОкончания;
+        private String комментарий;
+        public RdInf() { }
         public RdInf(Hashtable data)
         {
-            Path = data.ContainsKey("path") ? data["path"] as String : null;
-            if (String.IsNullOrWhiteSpace(Path)) { Path = null; }
+            path = data.ContainsKey("path") ? data["path"] as String : null;
+            if (String.IsNullOrWhiteSpace(path)) { path = null; }
+            else { path = path.Trim(); }
 
-            Номер = data.ContainsKey("номер") ? data["номер"] as String : null;
-            if (String.IsNullOrWhiteSpace(Номер)) { Номер = null; }
+            номер = data.ContainsKey("номер") ? data["номер"] as String : null;
+            if (String.IsNullOrWhiteSpace(номер)) { номер = null; }
+            else { номер = номер.Trim(); }
 
-            ДатаРегистрации = data.ContainsKey("дата_регистрации") ? data["дата_регистрации"] as String : null;
-            if (String.IsNullOrWhiteSpace(ДатаРегистрации)) { ДатаРегистрации = null; }
+            String s;
+            s = data.ContainsKey("дата_регистрации") ? data["дата_регистрации"] as String : null;
+            if (String.IsNullOrWhiteSpace(s)) { датаРегистрации = null; }
+            else
+            {
+                s = s.Trim();
+                if (s.Length == 10
+                    && new Regex(@"dd\.dd\.dddd").IsMatch(s)
+                    && Int32.TryParse(s.Substring(0, 2), out Int32 dd)
+                    && Int32.TryParse(s.Substring(3, 2), out Int32 MM)
+                    && Int32.TryParse(s.Substring(6, 4), out Int32 yyyy)
+                    )
+                {
+                    датаРегистрации = new DateTime(yyyy, MM, dd);
+                }
+            }
 
-            ДатаПеререгистрации = data.ContainsKey("дата_перерегистрации") ? data["дата_перерегистрации"] as String : null;
-            if (String.IsNullOrWhiteSpace(ДатаПеререгистрации)) { ДатаПеререгистрации = null; }
+            s = data.ContainsKey("дата_перерегистрации") ? data["дата_перерегистрации"] as String : null;
+            if (String.IsNullOrWhiteSpace(s)) { датаПеререгистрации = null; }
+            else
+            {
+                s = s.Trim();
+                if (s.Length == 10
+                    && new Regex(@"dd\.dd\.dddd").IsMatch(s)
+                    && Int32.TryParse(s.Substring(0, 2), out Int32 dd)
+                    && Int32.TryParse(s.Substring(3, 2), out Int32 MM)
+                    && Int32.TryParse(s.Substring(6, 4), out Int32 yyyy)
+                    )
+                {
+                    датаПеререгистрации = new DateTime(yyyy, MM, dd);
+                }
+            }
 
-            ДатаОкончания = data.ContainsKey("дата_окончания") ? data["дата_окончания"] as String : null;
-            if (String.IsNullOrWhiteSpace(ДатаОкончания)) { ДатаОкончания = null; }
+            s = data.ContainsKey("дата_окончания") ? data["дата_окончания"] as String : null;
+            if (String.IsNullOrWhiteSpace(s)) { датаОкончания = null; }
+            else
+            {
+                s = s.Trim();
+                if (s.Length == 10
+                    && new Regex(@"dd\.dd\.dddd").IsMatch(s)
+                    && Int32.TryParse(s.Substring(0, 2), out Int32 dd)
+                    && Int32.TryParse(s.Substring(3, 2), out Int32 MM)
+                    && Int32.TryParse(s.Substring(6, 4), out Int32 yyyy)
+                    )
+                {
+                    датаОкончания = new DateTime(yyyy, MM, dd);
+                }
+            }
 
-            Комментарий = data.ContainsKey("комментарий") ? data["комментарий"] as String : null;
-            if (String.IsNullOrWhiteSpace(Комментарий)) { Комментарий = null; }
+            комментарий = data.ContainsKey("комментарий") ? data["комментарий"] as String : null;
+            if (String.IsNullOrWhiteSpace(комментарий)) { комментарий = null; }
+            else { комментарий = комментарий.Trim(); }
+        }
+        public String Path { get => path; }
+        public String Номер { get => номер; }
+        public DateTime? ДатаРегистрации { get => датаРегистрации; }
+        public DateTime? ДатаПеререгистрации { get => датаПеререгистрации; }
+        public DateTime? ДатаОкончания { get => датаОкончания; }
+        public String Комментарий { get => комментарий; }
+        public void GetFileInfo(String path) 
+        {
+            DataTable dt = Data.Fs.GetFileInfo(path);
+            String id = "";
+            String номер = "";
+            String дата_регистрации = "";
+            String дата_перерегистрации = "";
+            String дата_окончания = "";
+            String комментарий = "";
+            if (dt.Rows.Count == 1)
+            {
+                id = (String)dt.Rows[0]["id"];
+                if (dt.Rows[0]["номер"] != DBNull.Value)
+                {
+                    номер = (String)dt.Rows[0]["номер"];
+                }
+                if (dt.Rows[0]["дата_регистрации"] != DBNull.Value)
+                {
+                    дата_регистрации = ((DateTime)dt.Rows[0]["дата_регистрации"]).ToString("dd.MM.yyyy");
+                }
+                if (dt.Rows[0]["дата_перерегистрации"] != DBNull.Value)
+                {
+                    дата_перерегистрации = ((DateTime)dt.Rows[0]["дата_перерегистрации"]).ToString("dd.MM.yyyy");
+                }
+                if (dt.Rows[0]["дата_окончания"] != DBNull.Value)
+                {
+                    дата_окончания = ((DateTime)dt.Rows[0]["дата_окончания"]).ToString("dd.MM.yyyy");
+                }
+                if (dt.Rows[0]["комментарий"] != DBNull.Value)
+                {
+                    комментарий = (String)dt.Rows[0]["комментарий"];
+                }
+            }
+        }
+        public void SetFileInfo() 
+        {
+            Data.Fs.SetFileInfo(this);
         }
     }
 }

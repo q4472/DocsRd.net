@@ -43,8 +43,9 @@ namespace DocsRd.Controllers
         {
             path = Utility.UnEscape(path);
             Object result = $"Controllers.RdController.GetFileInfo('{path}')<br />";
-            var dt = Data.Fs.GetFileInfo(path);
-            result = PartialView("~/Views/Rd/Inf.cshtml", dt);
+            RdInf rdInf = new RdInf();
+            rdInf.GetFileInfo(path);
+            result = PartialView("~/Views/Rd/Inf.cshtml", rdInf);
             return result;
         }
         public Object SetFileInfo(String data)
@@ -56,7 +57,7 @@ namespace DocsRd.Controllers
                 result += ht.Count.ToString();
             }
             RdInf rdInf = new RdInf(ht);
-            Data.Fs.SetFileInfo(rdInf);
+            rdInf.SetFileInfo();
             return result;
         }
     }
