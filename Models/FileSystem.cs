@@ -246,23 +246,26 @@ namespace DocsRd.Models
         public RdInf() { }
         public RdInf(Hashtable data)
         {
-            path = data.ContainsKey("path") ? data["path"] as String : null;
-            if (String.IsNullOrWhiteSpace(path)) { path = null; }
-            else { path = path.Trim(); }
+            if (data != null)
+            {
+                path = data.ContainsKey("path") ? data["path"] as String : null;
+                if (String.IsNullOrWhiteSpace(path)) { path = null; }
+                else { path = path.Trim(); }
 
-            номер = data.ContainsKey("номер") ? data["номер"] as String : null;
-            if (String.IsNullOrWhiteSpace(номер)) { номер = null; }
-            else { номер = номер.Trim(); }
+                номер = data.ContainsKey("номер") ? data["номер"] as String : null;
+                if (String.IsNullOrWhiteSpace(номер)) { номер = null; }
+                else { номер = номер.Trim(); }
 
-            датаРегистрации = ParseRuDate(data.ContainsKey("дата_регистрации") ? data["дата_регистрации"] : null);
-            
-            датаПеререгистрации = ParseRuDate(data.ContainsKey("дата_перерегистрации") ? data["дата_перерегистрации"] : null);
+                датаРегистрации = ParseRuDate(data.ContainsKey("дата_регистрации") ? data["дата_регистрации"] : null);
 
-            датаОкончания = ParseRuDate(data.ContainsKey("дата_окончания") ? data["дата_окончания"] : null);
+                датаПеререгистрации = ParseRuDate(data.ContainsKey("дата_перерегистрации") ? data["дата_перерегистрации"] : null);
 
-            комментарий = data.ContainsKey("комментарий") ? data["комментарий"] as String : null;
-            if (String.IsNullOrWhiteSpace(комментарий)) { комментарий = null; }
-            else { комментарий = комментарий.Trim(); }
+                датаОкончания = ParseRuDate(data.ContainsKey("дата_окончания") ? data["дата_окончания"] : null);
+
+                комментарий = data.ContainsKey("комментарий") ? data["комментарий"] as String : null;
+                if (String.IsNullOrWhiteSpace(комментарий)) { комментарий = null; }
+                else { комментарий = комментарий.Trim(); }
+            }
         }
         public String Path { get => path; }
         public String Номер { get => номер; }

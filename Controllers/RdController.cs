@@ -50,12 +50,8 @@ namespace DocsRd.Controllers
         }
         public Object SetFileInfo(String data)
         {
-            Object result = $"Controllers.RdController.Test('{data}')<br />";
+            Object result = $"Controllers.RdController.SetFileInfo('{data}')<br />";
             Hashtable ht = Nskd.JsonV3.Parse(data) as Hashtable;
-            if (ht != null)
-            {
-                result += ht.Count.ToString();
-            }
             RdInf rdInf = new RdInf(ht);
             rdInf.SetFileInfo();
             return result;
